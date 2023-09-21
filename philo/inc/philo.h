@@ -15,6 +15,15 @@
 
 # include <pthread.h>
 
+enum    e_state
+{
+    INIT,
+    EAT,
+    THINK,
+    SLEEP,
+    DEAD
+};
+
 typedef struct  s_philo
 {
     int n;
@@ -22,9 +31,13 @@ typedef struct  s_philo
     int eat;
     int sleep;
     int n_eat;
-    long long   when_I_was_born;
+    enum e_state state;
+    long long   t_0;
+    long long   last_meal;
+    int *loop;
     pthread_mutex_t *left_fork;
     pthread_mutex_t *right_fork;
+    pthread_mutex_t *check;
 }   t_philo;
 
 typedef struct s_data
@@ -38,7 +51,10 @@ typedef struct s_data
 
 typedef struct s_cmd
 {
-    /* data */
+    int loop;
+    int num_meal;
+    pthread_mutex_t *check_finish;
+    t_philo **philos;
 }   t_cmd;
 
 
@@ -51,5 +67,9 @@ void    *philo_routine(void *arg);
 
 // Time stuff
 long long	get_milliseconds(void);
+
+// State utils
+void    change_state(t_philo *philo);
+void    print_state(long long current_time, int philo, const char *status);
 
 #endif

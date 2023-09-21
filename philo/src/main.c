@@ -21,7 +21,7 @@ static void	clean_philos(t_philo **philos, int i)
 	free(philos);
 }
 
-static t_philo	**create_philos(t_data data)
+static t_philo	**create_philos(t_data data, int *loop, pthread_mutex_t *check)
 {
 	t_philo	**tmp;
 	int		i;
@@ -42,7 +42,9 @@ static t_philo	**create_philos(t_data data)
 			tmp[i]->die = data.die;
 			tmp[i]->eat = data.eat;
 			tmp[i]->sleep = data.sleep;
-			tmp[i]->n_eat = data.n_eat;
+			tmp[i]->n_eat = 0;
+			tmp[i]->loop = loop;
+			tmp[i]->check = check;
 			i++;
 		}
 	}
@@ -56,8 +58,36 @@ void delivery_forks(t_philo **philos, pthread_mutex_t *forks, int num)
 	i = 0;
 	while (i < num)
 	{
-		philos[i]->left_fork = &forks[(i + num - 1) % num] ;
+		philos[i]->left_fork = &forks[i] ;
 		philos[i]->right_fork = &forks[(i + 1) % num];
+		i++;
+	}
+}
+
+t_cmd	*create_cmd(t_data data)
+{
+	t_cmd *tmp;
+	pthread_mutex_t check;
+
+	tmp = (t_cmd *) malloc (sizeof(t_cmd));
+	if (tmp != NULL)
+	{
+		pthread_mutex_init(&check, NULL);
+		tmp->loop = 1;
+		tmp->num_meal = data.n_eat;
+		tmp->check_finish = &check;
+	}
+	return (tmp);
+}
+
+void init_forks(pthread_mutex_t *forks, int num)
+{
+	int	i;
+
+	i = 0;
+	while (i < num)
+	{
+		pthread_mutex_init(&forks[i], NULL);
 		i++;
 	}
 }
@@ -65,11 +95,14 @@ void delivery_forks(t_philo **philos, pthread_mutex_t *forks, int num)
 void init_philo(t_data data)
 {
 	t_philo 	**philos;
+	t_cmd		*cmd_struct;
 	pthread_t	*philos_t;
-	//pthread_t	cmd;
+	pthread_t	cmd;
  	pthread_mutex_t *forks;
 
-	philos = create_philos(data);
+	(void)cmd;
+	cmd_struct = create_cmd(data);
+	philos = create_philos(data, &cmd_struct->loop, cmd_struct->check_finish);
 	if (philos == NULL)
 		printf("MALLOC FAILED");
 	philos_t = (pthread_t *) malloc (sizeof(pthread_t) * data.num);
@@ -77,6 +110,7 @@ void init_philo(t_data data)
 	if (philos_t && forks)
 	{
 		delivery_forks(philos, forks, data.num);
+		init_forks(forks, data.num);
 	}
 	else
 	{
@@ -110,5 +144,4 @@ int	main(int argc, char **argv)
 		data.num, data.die, data.eat, data.sleep, data.n_eat);
 	}
 	init_philo(data);
-	
 }
