@@ -1,4 +1,5 @@
 #include "philo.h"
+#include <limits.h>
 
 static int  ft_isnum(const char *str)
 {
@@ -45,7 +46,7 @@ static int create_data(int argc, char **argv, t_data *data)
     if (argc == 6)
         data->n_eat = ft_atoi(argv[5]);
     else
-        data->n_eat = -1;
+        data->n_eat = INT_MAX;
     return (0);
 }
 

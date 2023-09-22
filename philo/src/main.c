@@ -42,9 +42,10 @@ static t_philo	**create_philos(t_data data, int *loop, pthread_mutex_t *check)
 			tmp[i]->die = data.die;
 			tmp[i]->eat = data.eat;
 			tmp[i]->sleep = data.sleep;
+			tmp[i]->num_philos = data.num;
 			tmp[i]->n_eat = 0;
 			tmp[i]->loop = loop;
-			tmp[i]->check = check;
+			tmp[i]->check_mutex = check;
 			i++;
 		}
 	}
@@ -74,8 +75,9 @@ t_cmd	*create_cmd(t_data data)
 	{
 		pthread_mutex_init(&check, NULL);
 		tmp->loop = 1;
-		tmp->num_meal = data.n_eat;
-		tmp->check_finish = &check;
+		tmp->n_philo = data.num;
+		tmp->max_meal = data.n_eat;
+		tmp->check_mutex = &check;
 	}
 	return (tmp);
 }
@@ -100,11 +102,11 @@ void init_philo(t_data data)
 	pthread_t	cmd;
  	pthread_mutex_t *forks;
 
-	(void)cmd;
 	cmd_struct = create_cmd(data);
-	philos = create_philos(data, &cmd_struct->loop, cmd_struct->check_finish);
+	philos = create_philos(data, &cmd_struct->loop, cmd_struct->check_mutex);
 	if (philos == NULL)
 		printf("MALLOC FAILED");
+	cmd_struct->philos = philos;
 	philos_t = (pthread_t *) malloc (sizeof(pthread_t) * data.num);
 	forks = (pthread_mutex_t *) malloc (sizeof(pthread_mutex_t) * data.num);
 	if (philos_t && forks)
@@ -119,9 +121,12 @@ void init_philo(t_data data)
 	int i = 0;
 	while (i < data.num)
 	{	
+		philos[i]->t_0 = get_milliseconds();
+    	philos[i]->last_meal = philos[i]->t_0;
 		pthread_create(&philos_t[i], NULL, philo_routine, philos[i]);
 		i++;
 	}
+	pthread_create(&cmd, NULL, cmd_routine, cmd_struct);
 	i = 0;
 	while (i < data.num)
 	{	
@@ -139,9 +144,5 @@ int	main(int argc, char **argv)
 	if (check_args(argc, argv, &data))
 		printf("wrong\n");
 	else
-	{
-		printf("DATA:\nnum - %d\ndie - %d\neat - %d\nsleep - %d\nnum eat - %d\n",
-		data.num, data.die, data.eat, data.sleep, data.n_eat);
-	}
-	init_philo(data);
+		init_philo(data);	
 }

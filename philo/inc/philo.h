@@ -27,6 +27,7 @@ enum    e_state
 typedef struct  s_philo
 {
     int n;
+    int num_philos;
     int die;
     int eat;
     int sleep;
@@ -37,7 +38,7 @@ typedef struct  s_philo
     int *loop;
     pthread_mutex_t *left_fork;
     pthread_mutex_t *right_fork;
-    pthread_mutex_t *check;
+    pthread_mutex_t *check_mutex;
 }   t_philo;
 
 typedef struct s_data
@@ -52,8 +53,9 @@ typedef struct s_data
 typedef struct s_cmd
 {
     int loop;
-    int num_meal;
-    pthread_mutex_t *check_finish;
+    int max_meal;
+    int n_philo;
+    pthread_mutex_t *check_mutex;
     t_philo **philos;
 }   t_cmd;
 
@@ -63,13 +65,23 @@ typedef struct s_cmd
 int check_args(int argc, char **argv, t_data *data);
 
 // Routines
-void    *philo_routine(void *arg);
+void    *philo_routine(void *data);
+void *cmd_routine(void *data);
 
 // Time stuff
 long long	get_milliseconds(void);
 
-// State utils
+// Cmd utils
+int get_loop(pthread_mutex_t *check_mutex, int *current_loop);
+void loop_to_zero(pthread_mutex_t *check_mutex, int *current_loop);
+void print_well_fed_message(pthread_mutex_t *check_mutex, int meals);
+
+// Philo utils
 void    change_state(t_philo *philo);
+void	set_dead(t_philo *philo, long long time_of_dead);
 void    print_state(long long current_time, int philo, const char *status);
+long long get_last_meal(t_philo *philo);
+int get_meals(t_philo *philo);
+
 
 #endif

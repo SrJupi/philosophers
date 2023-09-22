@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include <sys/time.h>
+#include <stddef.h>
 
 long long	get_milliseconds(void)
 {
