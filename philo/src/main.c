@@ -148,9 +148,6 @@ void	init_philo(t_data data)
 	free(forks_mutex);
 }
 
-
-#include <stdio.h>
-
 void print_usage() {
     printf("Usage: ./philo <number_of_philosophers> <time_to_die> \
 <time_to_eat> <time_to_sleep> \
