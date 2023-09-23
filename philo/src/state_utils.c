@@ -24,20 +24,21 @@ void	change_state(t_philo *philo)
 
 void	set_dead(t_philo *philo, long long time_of_dead)
 {
-	pthread_mutex_lock(philo->loop_mutex);
-	if (*philo->loop)
+	if (get_loop(philo->loop_mutex, philo->loop))
 	{
 		philo->state = DEAD;
+		print_state(time_of_dead - philo->t_0, philo, "died");
+		pthread_mutex_lock(philo->loop_mutex);
 		*philo->loop = 0;
-		print_state(time_of_dead - philo->t_0, philo, "dead");
+		pthread_mutex_unlock(philo->loop_mutex);
 	}
-	pthread_mutex_unlock(philo->loop_mutex);
 }
 
 void	print_state(long long current_time, t_philo *philo, const char *status)
 {
 	pthread_mutex_lock(philo->print_mutex);
-	printf("%lld %d is %s\n", current_time, philo->n, status);
+	if (get_loop(philo->loop_mutex, philo->loop))
+		printf("%lld %d %s\n", current_time, philo->n, status);
 	pthread_mutex_unlock(philo->print_mutex);
 }
 

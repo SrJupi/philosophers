@@ -6,10 +6,10 @@ int	try_get_forks(t_philo *philo)
 	
 	ret = 0;
 	lock_forks(philo);
-	if (*philo->left_fork && *philo->right_fork)
+	if (*philo->forks[0] && *philo->forks[1])
 	{
-		*philo->left_fork = 0;
-		*philo->right_fork = 0;
+		*philo->forks[0] = 0;
+		*philo->forks[1] = 0;
 		ret = 1;
 	}
 	unlock_forks(philo);
@@ -19,27 +19,19 @@ int	try_get_forks(t_philo *philo)
 void	return_forks(t_philo *philo)
 {
 	lock_forks(philo);
-	*philo->left_fork = 1;
-	*philo->right_fork = 1;
+	*philo->forks[0] = 1;
+	*philo->forks[1] = 1;
 	unlock_forks(philo);
 }
 
 void    lock_forks(t_philo *philo)
 {
-	if (philo->n < philo->data->num / 2)
-    {
-        pthread_mutex_lock(philo->left_mutex);
-	    pthread_mutex_lock(philo->right_mutex);
-    }
-    else
-    {
-        pthread_mutex_lock(philo->right_mutex);
-        pthread_mutex_lock(philo->left_mutex);
-    }
+	pthread_mutex_lock(philo->forks_mutex[philo->side]);
+	pthread_mutex_lock(philo->forks_mutex[(philo->side + 1) % 2]);
 }
 
 void    unlock_forks(t_philo *philo)
 {
-    pthread_mutex_unlock(philo->left_mutex);
-    pthread_mutex_unlock(philo->right_mutex);
+    pthread_mutex_unlock(philo->forks_mutex[0]);
+    pthread_mutex_unlock(philo->forks_mutex[1]);
 }

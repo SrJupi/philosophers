@@ -47,6 +47,7 @@ static t_philo	**create_philos(t_data data, int *loop, int *all_foods)
 			tmp[i]->meals_mutex = &meals_mutex;
 			tmp[i]->print_mutex = &print_mutex;
 			tmp[i]->state = THINK;
+			tmp[i]->side = i % 2;
 
 			i++;
 		}
@@ -61,16 +62,16 @@ void	delivery_forks(t_philo **philos, pthread_mutex_t *forks_mutex, int *forks, 
 	i = 0;
 	if (num == 1)
 	{
-		philos[i]->left_mutex = &forks_mutex[i];
-		philos[i]->right_mutex = NULL;
+		philos[i]->forks_mutex[0] = &forks_mutex[i];
+		philos[i]->forks_mutex[1] = NULL;
 		return ;
 	}
 	while (i < num)
 	{
-		philos[i]->left_mutex = &forks_mutex[i];
-		philos[i]->left_fork = &forks[i];
-		philos[i]->right_mutex = &forks_mutex[(i + 1) % num];
-		philos[i]->right_fork = &forks[(i + 1) % num];
+		philos[i]->forks_mutex[0] = &forks_mutex[i];
+		philos[i]->forks[0] = &forks[i];
+		philos[i]->forks_mutex[1]= &forks_mutex[(i + 1) % num];
+		philos[i]->forks[1] = &forks[(i + 1) % num];
 		i++;
 	}
 }
@@ -147,12 +148,30 @@ void	init_philo(t_data data)
 	free(forks_mutex);
 }
 
+
+#include <stdio.h>
+
+void print_usage() {
+    printf("Usage: ./philo <number_of_philosophers> <time_to_die> \
+<time_to_eat> <time_to_sleep> \
+[<number_of_times_each_philosopher_must_eat>]\n");
+    printf("\n");
+    printf("Description:\n");
+    printf("  Simulate the dining philosophers problem with specified parameters.\n");
+    printf("\n");
+    printf("Example:\n");
+    printf("  philo 5 800 200 200\n");
+    printf("  philo 4 410 200 200 5\n");
+}
+
+
+
 int	main(int argc, char **argv)
 {
 	t_data	data;
 
 	if (check_args(argc, argv, &data))
-		printf("wrong\n");
+		print_usage();
 	else
 		init_philo(data);
 }

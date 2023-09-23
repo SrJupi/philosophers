@@ -44,12 +44,11 @@ typedef struct  s_philo
     enum e_state state;
     long long   t_0;
     long long   last_meal;
+    int side; 
     int *loop;
     int *total_meals;
-    int *left_fork;
-    int *right_fork;
-    pthread_mutex_t *left_mutex;
-    pthread_mutex_t *right_mutex;
+    int *forks[2];
+    pthread_mutex_t *forks_mutex[2];
     pthread_mutex_t *loop_mutex;
     pthread_mutex_t *print_mutex;
     pthread_mutex_t *meals_mutex;
