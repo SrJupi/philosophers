@@ -10,9 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <sys/time.h>
-#include <stddef.h>
-
+#include <philo.h>
 long long	get_milliseconds(void)
 {
 	struct timeval	tv;

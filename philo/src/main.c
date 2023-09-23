@@ -10,131 +10,141 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "philo.h"
+#include <philo.h>
 
-static void	clean_philos(t_philo **philos, int i)
+static void clean_philos(t_philo **philos, int i)
 {
 	while (i--)
 		free(philos[i]);
 	free(philos);
 }
 
-static t_philo	**create_philos(t_data data, int *loop, pthread_mutex_t *check)
+static t_philo	**create_philos(t_data data, int *loop, int *all_foods)
 {
 	t_philo	**tmp;
 	int		i;
+	pthread_mutex_t loop_mutex;
+	pthread_mutex_t meals_mutex;
+	pthread_mutex_t print_mutex;
 
 	i = 0;
-	tmp = (t_philo **) malloc (sizeof(t_philo *) * data.num);
+	tmp = (t_philo **)malloc(sizeof(t_philo *) * data.num);
 	if (tmp != NULL)
 	{
 		while (i < data.num)
 		{
-			tmp[i] = (t_philo *) malloc (sizeof(t_philo));
+			tmp[i] = (t_philo *)malloc(sizeof(t_philo));
 			if (tmp[i] == NULL)
 			{
 				clean_philos(tmp, i);
 				return (NULL);
 			}
 			tmp[i]->n = i;
-			tmp[i]->die = data.die;
-			tmp[i]->eat = data.eat;
-			tmp[i]->sleep = data.sleep;
-			tmp[i]->num_philos = data.num;
-			tmp[i]->n_eat = 0;
+			tmp[i]->data = &data;
 			tmp[i]->loop = loop;
-			tmp[i]->check_mutex = check;
+			tmp[i]->total_meals = all_foods;
+			tmp[i]->loop_mutex = &loop_mutex;
+			tmp[i]->meals_mutex = &meals_mutex;
+			tmp[i]->print_mutex = &print_mutex;
+			tmp[i]->state = THINK;
+
 			i++;
 		}
 	}
 	return (tmp);
 }
 
-void delivery_forks(t_philo **philos, pthread_mutex_t *forks, int num)
+void	delivery_forks(t_philo **philos, pthread_mutex_t *forks_mutex, int *forks, int num)
 {
 	int	i;
 
 	i = 0;
+	if (num == 1)
+	{
+		philos[i]->left_mutex = &forks_mutex[i];
+		philos[i]->right_mutex = NULL;
+		return ;
+	}
 	while (i < num)
 	{
-		philos[i]->left_fork = &forks[i] ;
+		philos[i]->left_mutex = &forks_mutex[i];
+		philos[i]->left_fork = &forks[i];
+		philos[i]->right_mutex = &forks_mutex[(i + 1) % num];
 		philos[i]->right_fork = &forks[(i + 1) % num];
 		i++;
 	}
 }
 
-t_cmd	*create_cmd(t_data data)
-{
-	t_cmd *tmp;
-	pthread_mutex_t check;
-
-	tmp = (t_cmd *) malloc (sizeof(t_cmd));
-	if (tmp != NULL)
-	{
-		pthread_mutex_init(&check, NULL);
-		tmp->loop = 1;
-		tmp->n_philo = data.num;
-		tmp->max_meal = data.n_eat;
-		tmp->check_mutex = &check;
-	}
-	return (tmp);
-}
-
-void init_forks(pthread_mutex_t *forks, int num)
+void	init_mutex(pthread_mutex_t *forks_mutex, int num, t_philo *philo)
 {
 	int	i;
 
 	i = 0;
 	while (i < num)
 	{
-		pthread_mutex_init(&forks[i], NULL);
+		pthread_mutex_init(&forks_mutex[i], NULL);
 		i++;
 	}
+	pthread_mutex_init(philo->loop_mutex, NULL);
+	pthread_mutex_init(philo->meals_mutex, NULL);
+	pthread_mutex_init(philo->print_mutex, NULL);
+
 }
 
-void init_philo(t_data data)
+void fill_forks(int *forks, int size)
 {
-	t_philo 	**philos;
-	t_cmd		*cmd_struct;
-	pthread_t	*philos_t;
-	pthread_t	cmd;
- 	pthread_mutex_t *forks;
+	for (int i = 0; i < size; i++)
+	{
+		forks[i] = 1;
+	}
+	
+}
 
-	cmd_struct = create_cmd(data);
-	philos = create_philos(data, &cmd_struct->loop, cmd_struct->check_mutex);
+void	init_philo(t_data data)
+{
+	t_philo			**philos;
+	pthread_t		*philos_t;
+	pthread_mutex_t	*forks_mutex;
+	int				loop;
+	int				*forks;
+	int				i;
+	int				all_foods;
+
+	
+	loop = 1;
+	all_foods = 1;
+	philos = create_philos(data, &loop, &all_foods);
 	if (philos == NULL)
 		printf("MALLOC FAILED");
-	cmd_struct->philos = philos;
-	philos_t = (pthread_t *) malloc (sizeof(pthread_t) * data.num);
-	forks = (pthread_mutex_t *) malloc (sizeof(pthread_mutex_t) * data.num);
-	if (philos_t && forks)
+	philos_t = (pthread_t *)malloc(sizeof(pthread_t) * data.num);
+	forks_mutex = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * data.num);
+	forks = (int *) malloc (sizeof(int) * data.num);
+	fill_forks(forks, data.num);
+	if (philos_t && forks_mutex)
 	{
-		delivery_forks(philos, forks, data.num);
-		init_forks(forks, data.num);
+		delivery_forks(philos, forks_mutex, forks, data.num);
+		init_mutex(forks_mutex, data.num, philos[0]);
 	}
 	else
 	{
 		clean_philos(philos, data.num);
 	}
-	int i = 0;
+	i = 0;
 	while (i < data.num)
-	{	
+	{
 		philos[i]->t_0 = get_milliseconds();
-    	philos[i]->last_meal = philos[i]->t_0;
+		philos[i]->last_meal = philos[i]->t_0;
 		pthread_create(&philos_t[i], NULL, philo_routine, philos[i]);
 		i++;
 	}
-	pthread_create(&cmd, NULL, cmd_routine, cmd_struct);
 	i = 0;
 	while (i < data.num)
-	{	
+	{
 		pthread_join(philos_t[i], NULL);
 		i++;
 	}
 	clean_philos(philos, data.num);
-	free(forks);
+	free(forks_mutex);
 }
 
 int	main(int argc, char **argv)
@@ -144,5 +154,5 @@ int	main(int argc, char **argv)
 	if (check_args(argc, argv, &data))
 		printf("wrong\n");
 	else
-		init_philo(data);	
+		init_philo(data);
 }
