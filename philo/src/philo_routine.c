@@ -3,31 +3,22 @@
 
 void am_i_dead(t_philo *philo)
 {
-	long long tmp;
-
-	tmp = get_milliseconds();	
-	if (tmp - philo->last_meal > (long long)philo->data->die)
-	{
-		set_dead(philo, tmp);
-	}
+	if (get_milliseconds() - philo->last_meal > (long long)philo->data->die)
+		set_dead(philo);
 }
 
 void	ph_eat(t_philo *philo)
 {
 	long long	eat_init;
 
-	if (philo->forks_mutex[1] == NULL)
-		return ;
 	if (try_get_forks(philo))
 	{
-		print_state(get_milliseconds() - philo->t_0, philo, "has taken a fork");
+		print_state(philo, "has taken a fork");
 		change_state(philo);
-		eat_init = get_milliseconds();
+		eat_init = print_state(philo, "is eating");
 		philo->last_meal = eat_init;
-		print_state(eat_init - philo->t_0, philo, "is eating");
 		while (get_milliseconds() - eat_init < philo->data->eat)
 			am_i_dead(philo);
-		check_all_meals(philo);
 		return_forks(philo);
 	}
 }
@@ -36,8 +27,7 @@ void	ph_sleep(t_philo *philo)
 {
 	long long	sleep_init;
 
-	sleep_init = get_milliseconds();
-	print_state(sleep_init - philo->t_0, philo, "is sleeping");
+	sleep_init = print_state(philo, "is sleeping");
 	change_state(philo);
 	while (get_milliseconds() - sleep_init < philo->data->sleep)
 		am_i_dead(philo);
@@ -45,11 +35,8 @@ void	ph_sleep(t_philo *philo)
 
 void	ph_think(t_philo *philo)
 {
-	long long	think_init;
-
 	change_state(philo);
-	think_init = get_milliseconds() - philo->t_0;
-	print_state(think_init, philo, "is thinking");
+	print_state(philo, "is thinking");
 }
 
 void	*philo_routine(void *data)
@@ -57,6 +44,12 @@ void	*philo_routine(void *data)
 	t_philo *philo;
 
 	philo = (t_philo *)data;
+	if (philo->forks_mutex[0] == philo->forks_mutex[1])
+	{
+		while(get_loop(philo->loop_mutex, philo->loop))
+			am_i_dead(philo);
+		return (NULL);
+	}
 	while (get_loop(philo->loop_mutex, philo->loop))
 	{
 		am_i_dead(philo);

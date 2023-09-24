@@ -19,6 +19,7 @@
 #include <unistd.h>
 #include <stddef.h>
 #include <sys/time.h>
+#include <string.h>
 
 enum    e_state
 {
@@ -35,6 +36,8 @@ typedef struct s_data
     int eat;
     int sleep;
     int max_eat;
+    int loop;
+    int meals;
 }   t_data;
 
 typedef struct  s_philo
@@ -63,24 +66,21 @@ void    *philo_routine(void *data);
 // Time stuff
 long long	get_milliseconds(void);
 
-
+// Loop utils
 int get_loop(pthread_mutex_t *loop_mutex, int *current_loop);
+void	zero_loop(pthread_mutex_t *loop_mutex, int *current_loop);
 
-// Philo utils
+// State utils
 void    change_state(t_philo *philo);
-void	set_dead(t_philo *philo, long long time_of_dead);
-void	print_state(long long current_time, t_philo *philo, const char *status);
-void	check_all_meals(t_philo *philo);
+void	set_dead(t_philo *philo);
+
+// Print utils
+long long	print_state(t_philo *philo, const char *status);
 
 
 int	    try_get_forks(t_philo *philo);
 void    lock_forks(t_philo *philo);
 void    unlock_forks(t_philo *philo);
 void	return_forks(t_philo *philo);
-
-void add_to_priority(t_philo *philo);
-int is_priority(t_philo *philo);
-
-
 
 #endif

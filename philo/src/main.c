@@ -60,12 +60,6 @@ void	delivery_forks(t_philo **philos, pthread_mutex_t *forks_mutex, int *forks, 
 	int	i;
 
 	i = 0;
-	if (num == 1)
-	{
-		philos[i]->forks_mutex[0] = &forks_mutex[i];
-		philos[i]->forks_mutex[1] = NULL;
-		return ;
-	}
 	while (i < num)
 	{
 		philos[i]->forks_mutex[0] = &forks_mutex[i];
@@ -131,10 +125,11 @@ void	init_philo(t_data data)
 		clean_philos(philos, data.num);
 	}
 	i = 0;
+	long long init_time = get_milliseconds();
 	while (i < data.num)
 	{
-		philos[i]->t_0 = get_milliseconds();
-		philos[i]->last_meal = philos[i]->t_0;
+		philos[i]->t_0 = init_time;
+		philos[i]->last_meal = init_time;
 		pthread_create(&philos_t[i], NULL, philo_routine, philos[i]);
 		i++;
 	}

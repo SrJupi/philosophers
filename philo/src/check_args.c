@@ -46,6 +46,8 @@ static int	create_data(int argc, char **argv, t_data *data)
 		data->max_eat = ft_atoi(argv[5]);
 	else
 		data->max_eat = -1;
+	data->loop = 1;
+	data->meals = 0;
 	return (0);
 }
 
