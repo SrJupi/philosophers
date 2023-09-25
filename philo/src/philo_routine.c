@@ -13,7 +13,6 @@ void	ph_eat(t_philo *philo)
 
 	if (try_get_forks(philo))
 	{
-		print_state(philo, "has taken a fork");
 		change_state(philo);
 		eat_init = print_state(philo, "is eating");
 		philo->last_meal = eat_init;

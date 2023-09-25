@@ -9,7 +9,9 @@ int	try_get_forks(t_philo *philo)
 	if (*philo->forks[0] && *philo->forks[1])
 	{
 		*philo->forks[0] = 0;
+		print_state(philo, "has taken a fork");
 		*philo->forks[1] = 0;
+		print_state(philo, "has taken a fork");
 		ret = 1;
 	}
 	unlock_forks(philo);

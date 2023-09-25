@@ -48,7 +48,6 @@ static t_philo	**create_philos(t_data data, int *loop, int *all_foods)
 			tmp[i]->print_mutex = &print_mutex;
 			tmp[i]->state = THINK;
 			tmp[i]->side = i % 2;
-
 			i++;
 		}
 	}
@@ -107,7 +106,7 @@ void	init_philo(t_data data)
 
 	
 	loop = 1;
-	all_foods = 1;
+	all_foods = 0;
 	philos = create_philos(data, &loop, &all_foods);
 	if (philos == NULL)
 		printf("MALLOC FAILED");
