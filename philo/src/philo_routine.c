@@ -11,15 +11,15 @@ void	ph_eat(t_philo *philo)
 {
 	long long	eat_init;
 
-	if (try_get_forks(philo))
-	{
-		change_state(philo);
-		eat_init = print_state(philo, "is eating");
-		philo->last_meal = eat_init;
-		while (get_milliseconds() - eat_init < philo->data->eat)
-			am_i_dead(philo);
-		return_forks(philo);
-	}
+	lock_forks(philo);
+	change_state(philo);
+	eat_init = print_state(philo, "is eating");
+	pthread_mutex_lock(&philo->my_mutex);
+	philo->last_meal = eat_init;
+	pthread_mutex_unlock(&philo->my_mutex);
+	while (get_milliseconds() - eat_init < philo->data->eat)
+		am_i_dead(philo);
+	unlock_forks(philo);
 }
 
 void	ph_sleep(t_philo *philo)

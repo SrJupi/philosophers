@@ -34,6 +34,6 @@ void    lock_forks(t_philo *philo)
 
 void    unlock_forks(t_philo *philo)
 {
-    pthread_mutex_unlock(philo->forks_mutex[0]);
-    pthread_mutex_unlock(philo->forks_mutex[1]);
+    pthread_mutex_unlock(philo->forks_mutex[philo->side]);
+    pthread_mutex_unlock(philo->forks_mutex[(philo->side + 1) % 2]);
 }
