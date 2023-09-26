@@ -87,14 +87,14 @@ void	set_dead(t_philo *philo);
 long long	print_state(t_philo *philo, const char *status);
 
 
-int	    try_get_forks(t_philo *philo);
+int	try_get_forks(t_philo *philo);
 void    lock_forks(t_philo *philo);
 void    unlock_forks(t_philo *philo);
 void	return_forks(t_philo *philo);
 
 
 long long get_last_meal(t_philo philo);
+void am_i_dead(t_philo *philo);
 
-void *death_routine(void *data);
 
 #endif

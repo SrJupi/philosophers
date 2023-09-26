@@ -2,20 +2,31 @@
 
 int	try_get_forks(t_philo *philo)
 {
-	int	ret;
+	int fork1;
+	int fork2;
 	
-	ret = 0;
-	lock_forks(philo);
-	if (*philo->forks[0] && *philo->forks[1])
+	fork1 = 0;
+	fork2 = 0;
+	while (!fork1 || !fork2)
 	{
-		*philo->forks[0] = 0;
-		print_state(philo, "has taken a fork");
-		*philo->forks[1] = 0;
-		print_state(philo, "has taken a fork");
-		ret = 1;
+		am_i_dead(philo);
+		lock_forks(philo);
+		if (*philo->forks[0])
+		{
+			*philo->forks[0] = 0;
+			print_state(philo, "has taken a fork");
+			fork1 = 1;
+		}
+		if (*philo->forks[1])
+		{
+			*philo->forks[1] = 0;
+			print_state(philo, "has taken a fork");
+			fork2 = 1;
+		}
+		unlock_forks(philo);
 	}
-	unlock_forks(philo);
-	return (ret);
+
+	return (1);
 }
 
 void	return_forks(t_philo *philo)
