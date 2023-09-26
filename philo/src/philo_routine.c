@@ -47,7 +47,7 @@ void	*philo_routine(void *data)
 
 	philo = (t_philo *)data;
 	if (philo->n % 2)
-		usleep(2000);
+		usleep(5000);
 	if (philo->forks_mutex[0] == philo->forks_mutex[1])
 	{
 		while(get_loop(philo->loop_mutex, philo->loop))
