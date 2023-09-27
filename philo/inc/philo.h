@@ -58,14 +58,6 @@ typedef struct  s_philo
     pthread_mutex_t my_mutex;
 }   t_philo;
 
-typedef struct s_death
-{  
-    int             n_philo;
-    int             *loop;
-    t_philo         *philos;
-    pthread_mutex_t *loop_mutex;
-} t_death;
-
 // Check philo parameters
 int check_args(int argc, char **argv, t_data *data);
 
