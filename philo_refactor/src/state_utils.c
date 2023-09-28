@@ -12,10 +12,21 @@
 
 #include <philo_r.h>
 
+void	change_state(t_philo *philo)
+{
+	if (philo->state == THINK)
+		philo->state = EAT;
+	else if (philo->state == EAT)
+		philo->state = SLEEP;
+	else if (philo->state == SLEEP)
+		philo->state = THINK;
+}
+
 void	set_dead(t_philo *philo)
 {
 	if (get_loop(philo->loop_mutex, philo->loop))
 	{
+		philo->state = DEAD;
 		print_state(philo, "died");
 		zero_loop(philo->loop_mutex, philo->loop);
 	}

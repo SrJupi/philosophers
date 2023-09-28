@@ -1,7 +1,7 @@
 NAME = philo
 
-CC = cc
-CFLAGS = -pthread -Wall -Wextra -Werror -MMD
+CC = gcc
+CFLAGS = -Wall -Wextra -Werror -MMD
 
 # Folders
 SRC_DIR = src
@@ -19,14 +19,14 @@ DEP = $(addprefix $(OBJ_DIR)/,$(SRC:.c=.d))
 # Compile SRC files and move to folders
 $(OBJ_DIR)/%.o : $(SRC_DIR)/%.c $(INC_DIR)/philo_r.h
 	@mkdir -p $(OBJ_DIR)
-	$(CC) $(CFLAGS) -I$(INC_DIR) -O3 -c $< -o $@
+	$(CC) $(CFLAGS) -I$(INC_DIR) -O3 -c $< -o $@ 
 	@mkdir -p $(DEP_DIR)
 	@mv $(OBJ_DIR)/$*.d $(DEP_DIR)/
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	$(CC) $(OBJ) -o $(NAME)
+	$(CC) $(OBJ) -o $(NAME) -fsanitize=thread
 	@echo "Philo compiled!"
 
 clean:

@@ -6,7 +6,7 @@
 /*   By: lsulzbac <lsulzbac@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 13:42:58 by lsulzbac          #+#    #+#             */
-/*   Updated: 2023/09/20 13:43:22 by lsulzbac         ###   ########.fr       */
+/*   Updated: 2023/09/28 19:00:24 by lsulzbac         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,14 @@
 # include <sys/time.h>
 # include <unistd.h>
 
+enum e_state
+{
+	EAT,
+	THINK,
+	SLEEP,
+	DEAD,
+};
+
 typedef struct s_philo
 {
 	int				num;
@@ -30,6 +38,7 @@ typedef struct s_philo
 	int				max_eat;
 	int				n;
 	int				meals;
+	enum e_state	state;
 	long long		t_0;
 	long long		last_meal;
 	int				side;
@@ -73,6 +82,7 @@ void				zero_loop(pthread_mutex_t *loop_mutex, int *current_loop);
 
 // State utils
 void				set_dead(t_philo *philo);
+void				change_state(t_philo *philo);
 
 // Print utils
 long long			print_state(t_philo *philo, const char *status);
@@ -85,5 +95,6 @@ void				am_i_dead(t_philo *philo);
 int					init_data(t_data *data);
 
 int					clean_data(t_data *data);
+int					clean_mutexes(t_data *data);
 
 #endif
