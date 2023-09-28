@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include <philo_r.h>
+
 long long	get_milliseconds(void)
 {
 	struct timeval	tv;

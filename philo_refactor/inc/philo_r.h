@@ -13,82 +13,77 @@
 #ifndef PHILO_R_H
 # define PHILO_R_H
 
-#include <pthread.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <stddef.h>
-#include <sys/time.h>
-#include <string.h>
+# include <pthread.h>
+# include <stddef.h>
+# include <stdio.h>
+# include <stdlib.h>
+# include <string.h>
+# include <sys/time.h>
+# include <unistd.h>
 
-typedef struct  s_philo
+typedef struct s_philo
 {
-    int num;
-    int die;
-    int eat;
-    int sleep;
-    int max_eat;
-    int n;
-    int meals;
-    long long   t_0;
-    long long   last_meal;
-    int side; 
-    int *loop;
-    int *total_meals;
-    int *forks[2];
-    pthread_mutex_t *forks_mutex[2];
-    pthread_mutex_t *loop_mutex;
-    pthread_mutex_t *print_mutex;
-    pthread_mutex_t *meals_mutex;
-}   t_philo;
+	int				num;
+	int				die;
+	int				eat;
+	int				sleep;
+	int				max_eat;
+	int				n;
+	int				meals;
+	long long		t_0;
+	long long		last_meal;
+	int				side;
+	int				*loop;
+	int				*total_meals;
+	int				*forks[2];
+	pthread_mutex_t	*forks_mutex[2];
+	pthread_mutex_t	*loop_mutex;
+	pthread_mutex_t	*print_mutex;
+}					t_philo;
 
 typedef struct s_data
 {
-    int num;
-    int die;
-    int eat;
-    int sleep;
-    int max_eat;
-    int loop;
-    pthread_mutex_t loop_mutex;
-    int meals;
-    pthread_mutex_t meals_mutex;
-    pthread_mutex_t print_mutex;
-    t_philo     *philos;
-    pthread_t	*philos_t;
-    pthread_mutex_t *forks_mutex;
-    int             *forks;
-}   t_data;
+	int				num;
+	int				die;
+	int				eat;
+	int				sleep;
+	int				max_eat;
+	int				loop;
+	pthread_mutex_t	loop_mutex;
+	int				meals;
+	pthread_mutex_t	print_mutex;
+	t_philo			*philos;
+	pthread_t		*philos_t;
+	pthread_mutex_t	*forks_mutex;
+	int				*forks;
+}					t_data;
 
 // Check philo parameters
-int check_args(int argc, char **argv, t_data *data);
+int					check_args(int argc, char **argv, t_data *data);
 
 // Routines
-void    *philo_routine(void *data);
+void				*philo_routine(void *data);
 
 // Time stuff
-long long	get_milliseconds(void);
+long long			get_milliseconds(void);
 
 // Loop utils
-int get_loop(pthread_mutex_t *loop_mutex, int *current_loop);
-void	zero_loop(pthread_mutex_t *loop_mutex, int *current_loop);
+int					get_loop(pthread_mutex_t *loop_mutex, int *current_loop);
+void				zero_loop(pthread_mutex_t *loop_mutex, int *current_loop);
 
 // State utils
-void    change_state(t_philo *philo);
-void	set_dead(t_philo *philo);
+void				set_dead(t_philo *philo);
 
 // Print utils
-long long	print_state(t_philo *philo, const char *status);
+long long			print_state(t_philo *philo, const char *status);
 
+int					try_get_forks(t_philo *philo);
+void				return_forks(t_philo *philo);
 
-int	try_get_forks(t_philo *philo);
-void    lock_forks(t_philo *philo);
-void    unlock_forks(t_philo *philo);
-void	return_forks(t_philo *philo);
+void				am_i_dead(t_philo *philo);
 
+int					init_data(t_data *data);
 
-long long get_last_meal(t_philo philo);
-void am_i_dead(t_philo *philo);
-
+int					clean_data(t_data *data);
 
 #endif

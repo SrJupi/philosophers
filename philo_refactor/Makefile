@@ -10,7 +10,7 @@ DEP_DIR = dep
 INC_DIR = inc
 
 # Source files
-SRC = main.c check_args.c philo_routine.c time_utils.c state_utils.c forks_utils.c loop_utils.c print_utils.c
+SRC = main.c check_args.c philo_routine.c time_utils.c state_utils.c forks_utils.c loop_utils.c print_utils.c clean_utils.c init_utils.c
 
 # Object files
 OBJ = $(addprefix $(OBJ_DIR)/,$(SRC:.c=.o))

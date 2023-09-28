@@ -17,7 +17,7 @@ static void	print_well_fed(t_philo *philo)
 	if (get_loop(philo->loop_mutex, philo->loop))
 	{
 		zero_loop(philo->loop_mutex, philo->loop);
-		printf("Simulation ended at %lld because all philosophers were full.\n",\
+		printf("Simulation ended at %lld because all philosophers were full.\n",
 			get_milliseconds() - philo->t_0);
 	}
 }
@@ -31,13 +31,12 @@ static void	check_all_meals(t_philo *philo)
 		if (*philo->total_meals == philo->num)
 			print_well_fed(philo);
 	}
-
 }
 
 long long	print_state(t_philo *philo, const char *status)
 {
-	long long 	tmp;
-	
+	long long	tmp;
+
 	tmp = 0;
 	pthread_mutex_lock(philo->print_mutex);
 	if (get_loop(philo->loop_mutex, philo->loop))
