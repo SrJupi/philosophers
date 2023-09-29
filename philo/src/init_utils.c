@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <philo_r.h>
+#include <philo.h>
 
 static void	init_philos(t_data *data)
 {

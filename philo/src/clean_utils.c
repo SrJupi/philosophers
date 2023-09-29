@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <philo_r.h>
+#include <philo.h>
 
 int	clean_mutexes(t_data *data)
 {

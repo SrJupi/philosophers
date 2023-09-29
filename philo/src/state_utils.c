@@ -12,16 +12,6 @@
 
 #include <philo.h>
 
-long long get_last_meal(t_philo philo)
-{
-	long long tmp;
-
-	pthread_mutex_lock(&philo.my_mutex);
-	tmp = philo.last_meal;
-	pthread_mutex_unlock(&philo.my_mutex);
-	return (tmp);
-}
-
 void	change_state(t_philo *philo)
 {
 	if (philo->state == THINK)
@@ -38,8 +28,6 @@ void	set_dead(t_philo *philo)
 	{
 		philo->state = DEAD;
 		print_state(philo, "died");
-		pthread_mutex_lock(philo->loop_mutex);
-		*philo->loop = 0;
-		pthread_mutex_unlock(philo->loop_mutex);
+		zero_loop(philo->loop_mutex, philo->loop);
 	}
 }
