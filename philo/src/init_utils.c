@@ -44,14 +44,11 @@ static int	init_mutexes(t_data *data)
 	int	i;
 
 	i = 0;
-	if (pthread_mutex_init(&data->loop_mutex, NULL))
-		return (1);
-	if (pthread_mutex_init(&data->print_mutex, NULL))
-		return (1);
+	pthread_mutex_init(&data->loop_mutex, NULL);
+	pthread_mutex_init(&data->print_mutex, NULL);
 	while (i < data->num)
 	{
-		if (pthread_mutex_init(&data->forks_mutex[i], NULL))
-			return (1);
+		pthread_mutex_init(&data->forks_mutex[i], NULL);
 		i++;
 	}
 	return (0);
@@ -83,8 +80,7 @@ static void	init_threads(t_data *data)
 int	init_data(t_data *data)
 {
 	init_philos(data);
-	if (init_mutexes(data))
-		return (clean_mutexes(data));
+	init_mutexes(data);
 	init_threads(data);
 	return (0);
 }

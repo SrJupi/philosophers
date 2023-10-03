@@ -62,10 +62,9 @@ int	main(int argc, char **argv)
 		print_usage();
 	else if (malloc_data(&data))
 		clean_data(&data);
-	else if (init_data(&data))
-		clean_data(&data);
 	else
 	{
+		init_data(&data);
 		clean_mutexes(&data);
 		clean_data(&data);
 	}

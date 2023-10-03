@@ -64,12 +64,9 @@ void	*philo_routine(void *data)
 	}
 	while (get_loop(philo->loop_mutex, philo->loop))
 	{
-		if (philo->state == THINK)
-			ph_eat(philo);
-		else if (philo->state == EAT)
-			ph_sleep(philo);
-		else if (philo->state == SLEEP)
-			ph_think(philo);
+		ph_eat(philo);
+		ph_sleep(philo);
+		ph_think(philo);
 	}
 	return (NULL);
 }

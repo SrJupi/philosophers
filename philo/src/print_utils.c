@@ -51,9 +51,12 @@ long long	print_state(t_philo *philo, const char *status)
 	if (get_loop(philo->loop_mutex, philo->loop))
 	{
 		tmp = get_milliseconds();
-		printf("%lld %d %s\n", tmp - philo->t_0, philo->n, status);
+		printf("%6lld ms -> philosopher %03d %s\n", \
+		tmp - philo->t_0, philo->n, status);
 		if (philo->max_eat > 0 && philo->state == EAT)
 			check_all_meals(philo);
+		if (philo->state == DEAD)
+			zero_loop(philo->loop_mutex, philo->loop);
 	}
 	pthread_mutex_unlock(philo->print_mutex);
 	return (tmp);
