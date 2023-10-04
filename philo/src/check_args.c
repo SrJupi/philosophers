@@ -54,6 +54,8 @@ static int	create_data(int argc, char **argv, t_data *data)
 	data->die = ft_atoi(argv[2]);
 	data->eat = ft_atoi(argv[3]);
 	data->sleep = ft_atoi(argv[4]);
+	if (data->die < 60 || data->eat < 60 || data->sleep < 60)
+		return (1);
 	if (argc == 6)
 		data->max_eat = ft_atoi(argv[5]);
 	else

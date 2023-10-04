@@ -14,7 +14,7 @@
 
 void	am_i_dead(t_philo *philo)
 {
-	if (get_milliseconds() - philo->last_meal > (long long)philo->die)
+	if (get_milliseconds() - philo->last_meal >= (long long)philo->die)
 		set_dead(philo);
 }
 
@@ -24,7 +24,7 @@ void	ph_eat(t_philo *philo)
 
 	if (try_get_forks(philo))
 	{
-		change_state(philo);
+		philo->state = EAT;
 		eat_init = print_state(philo, "is eating");
 		philo->last_meal = eat_init;
 		while (get_milliseconds() - eat_init < (long long)philo->eat)
@@ -37,7 +37,7 @@ void	ph_sleep(t_philo *philo)
 {
 	long long	sleep_init;
 
-	change_state(philo);
+	philo->state = SLEEP;
 	sleep_init = print_state(philo, "is sleeping");
 	while (get_milliseconds() - sleep_init < (long long)philo->sleep)
 		am_i_dead(philo);
@@ -45,7 +45,7 @@ void	ph_sleep(t_philo *philo)
 
 void	ph_think(t_philo *philo)
 {
-	change_state(philo);
+	philo->state = THINK;
 	print_state(philo, "is thinking");
 }
 

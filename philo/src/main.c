@@ -27,18 +27,6 @@ specified parameters.\n");
 	printf("  philo 4 410 200 200 5\n");
 }
 
-void	fill_forks(int *forks, int size)
-{
-	int	i;
-
-	i = 0;
-	while (i < size)
-	{
-		forks[i] = 1;
-		i++;
-	}
-}
-
 int	malloc_data(t_data *data)
 {
 	data->philos = (t_philo *)malloc(sizeof(t_philo) * data->num);
@@ -48,7 +36,7 @@ int	malloc_data(t_data *data)
 	data->forks = (int *)malloc(sizeof(int) * data->num);
 	if (!data->philos || !data->philos_t || !data->forks_mutex || !data->forks)
 		return (clean_data(data));
-	fill_forks(data->forks, data->num);
+	memset(data->forks, 1, sizeof(int) * data->num);
 	memset(data->philos, 0, sizeof(t_philo) * data->num);
 	return (0);
 }

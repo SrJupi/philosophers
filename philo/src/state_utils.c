@@ -12,16 +12,6 @@
 
 #include <philo.h>
 
-void	change_state(t_philo *philo)
-{
-	if (philo->state == THINK)
-		philo->state = EAT;
-	else if (philo->state == EAT)
-		philo->state = SLEEP;
-	else if (philo->state == SLEEP)
-		philo->state = THINK;
-}
-
 void	set_dead(t_philo *philo)
 {
 	philo->state = DEAD;

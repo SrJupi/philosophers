@@ -12,22 +12,10 @@
 
 #include <philo.h>
 
-/* static int	ft_strcmp(const char *s1, const char *s2)
-{
-	while (*s1 && *s2)
-	{
-		if (*s1 != *s2)
-			return (*s1 - *s2);
-		s1++;
-		s2++;
-	}
-	return (*s1 - *s2);
-} */
-
 static void	print_well_fed(t_philo *philo)
 {
 	zero_loop(philo->loop_mutex, philo->loop);
-	printf("Simulation ended at %lld because all philosophers were full.\n",
+	printf("Simulation ended at %lld ms because all philosophers were full.\n",
 		get_milliseconds() - philo->t_0);
 }
 
